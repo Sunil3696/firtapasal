@@ -1,0 +1,258 @@
+const Product = require("../models/product.model");
+const Brand = require("../models/brand.model");
+
+class ProductController{
+    createProduct(req, res, next){
+      const data = req.body
+    //   res.json({
+    //       result : data
+    //   });
+        let product = new Product(data);
+        product.save()
+                .then(function(response){
+                    res.json({
+                        result : response,
+                        status : true,
+                        message : "Product has been added"
+                    });
+                    Brand.findOneAndUpdate(
+                        {
+                            _id : req.body.under_brand
+                        },
+                        {
+                            $push : {products : response._id}
+                        }
+                    )
+                })
+                .catch(function(error){
+                    res.json({
+                        result : error,
+                        status : false,
+                        message : "Error in adding Product"
+                    });
+                })
+
+
+    }
+}
+
+module.exports = ProductController;
+
+
+
+
+
+generateOffer(req, res, next) {
+    let receipt_id = req.params.receipt_id;
+    let added_offer_id = mongoose.Types.ObjectId(req.body.added_offer_data);
+    let offer_owner = req.user.id;
+    // console.log(offer_owner)
+
+    CusOffer.findOne(
+        { _id: added_offer_id }
+    )
+        .then(function (response) {
+            console.log(response[0].offer_id)
+            let data = array(response[0].offer_id);
+            Receipt.updateOne(
+                { _id: receipt_id },
+                { $set: { "added_offer": data } }
+            )
+                .then(function (response) {
+                    res.json({
+                        ressult: response,
+                        status: true,
+                        message: "updated"
+                    });
+                })
+                .catch(function (error) {
+                    res.json({
+                        resssult: error,
+                        status: false,
+                        message: "Cannot be updated"
+                    });
+                })
+
+        })
+        .catch(function (error) {
+            res.json({
+                result: error
+            })
+        })
+}
+
+
+
+console.log("origial UPC: ",data);
+var myarr = [];
+data.map((value) => {
+
+
+  const myRes  = Product.find(
+        { _id: value },
+        {},
+        (err, data) => {
+            
+       return myarr.push(data[0]["UPC"])
+        })
+    // console.log(myRes);
+});
+res.json({
+    result: myarr
+})
+
+
+
+// console.log(validatedUPC);
+console.log(myarr);
+
+
+
+// Receipt.findOne(
+//     {
+//         _id : "6228a10055404146464936d6"
+//     }
+// )
+// .then(function(response){
+//     console.log()
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+scanUPC = (req, res, next) => {   //here need to access all array and to set array for validation but code doesnot work so work flow has been changed
+    const data = req.body.UPC; // now it support only one UPC validation at a time
+    // console.log(typeof(data))
+    Product.find(
+        { _id: data }
+    )
+        .then(function (product) {
+
+
+            let getDate = function (id) {
+                Receipt.find(
+                    {_id : id}
+                    )
+                    return 20
+            }
+            getDate(req.params.receipt_id)
+            if (product) {
+                const marr = [];
+                let prdId = product[0]["_id"]
+                Offer.find(
+                    { 'eligible_products': prdId}
+                )
+                    .then(function (offers) {
+                        let offerLen = offers.length
+                        //we get array of object
+                        for (let i = 0; i < offerLen; i++) {
+                            console.log("rid: ", req.params.receipt_id)
+                        }
+
+
+
+
+
+
+
+                        // res.json({
+                        //     res : offers
+                        // })
+                    })
+            }
+        })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const data = req.body.UPC; //this is array of UPC so need to iterate and verify of offer available or not
+
+// console.log("origial UPC: ",data)
+
+var myarr = [];
+
+data.map((value) => {
+
+
+
+
+const myRes = Product.find(
+
+{ _id: value },
+
+{},
+
+(err, data) => {
+
+return myarr.push(data[0]["UPC"])
+
+})
+
+console.log(myRes);
+
+});
+
+res.json({
+
+result: myarr
+
+})
+
+
+
+
+
+// console.log(validatedUPC);
+
+console.log(myarr);
+
+
+
+
+
+// Receipt.findOne(
+
+// {
+
+// _id : "6228a10055404146464936d6"
+
+// }
+
+// )
+
+// .then(function(response){
+
+// console.log()
+
+// })
+
